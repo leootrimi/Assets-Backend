@@ -15,7 +15,7 @@ class Equipment(models.Model):
     tag = models.CharField(max_length=100, blank=True, null=True)
     assigned_form = models.CharField(max_length=10)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    departament = models.CharField(max_length=10, null=True)
+    departament = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
         return f"{self.equipment_type} - {self.model} ({self.serial_no})"

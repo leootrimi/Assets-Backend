@@ -41,7 +41,16 @@ def getByType(request, type):
 
     return Response(distinct_models)
 
-
+@api_view(['GET'])
 def getCount(request, model):
     count = modelTag.objects.filter(model__iexact=model).count()
     return JsonResponse({'count': count})
+
+@api_view(['GET'])
+def distingCount(request):
+    count = modelTag.objects.all()
+    serializer = ModelSerializer(count, many=True)
+    data = serializer.data
+    data_sorted = sorted(data, key=itemgetter('model'))
+    distinct_models = [next(group) for key, group in groupby(data_sorted, key=itemgetter('model'))]
+    return Response(len(distinct_models))

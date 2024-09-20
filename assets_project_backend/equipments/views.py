@@ -28,6 +28,7 @@ def getEquipments(request):
         return Response(serializer.data)
 
 
+
 @api_view(['GET'])
 def equipment_detail(request, serial_no):
     print(f"Received request for serial_no: {serial_no}")
@@ -48,3 +49,8 @@ def count_equipment(request):
 def total_equipment_price(request):
     total_price = Equipment.objects.aggregate(total_price=Sum('price'))['total_price']
     return JsonResponse({'total_price': total_price})
+
+@api_view(['GET'])
+def getCount(request, model):
+    count = Equipment.objects.filter(model__iexact=model).count()
+    return JsonResponse({'count': count})
