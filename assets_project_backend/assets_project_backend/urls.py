@@ -22,5 +22,6 @@ urlpatterns = [
     path('employers/', include('employers.urls')),
     path('equipment/', include('equipments.urls')),
     path('model/', include('modelTag.urls')),
+    path('req/', include('equipmentRequest.urls')),
     path('auth/', include('authentication.urls')),
 ]
