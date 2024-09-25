@@ -1,8 +1,7 @@
 from django.db.models import Sum
 from django.http import HttpResponse, JsonResponse
 from .models import Equipment
-import json
-from django.contrib.auth.decorators import login_required
+from employers.models import Employers
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -54,3 +53,37 @@ def total_equipment_price(request):
 def getCount(request, model):
     count = Equipment.objects.filter(model__iexact=model).count()
     return JsonResponse({'count': count})
+
+@api_view(['GET'])
+def getById(request, id):
+    try:
+        equipment = Equipment.objects.filter(employer=id)
+    except Equipment.DoesNotExist:
+        return Response({'error': 'Equipment not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = EquipmentSerializer(equipment, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET', 'PUT'])
+def updateEquipment(request, serial_no):
+    print(f"Received request to update equipment with serial_no: {serial_no}")
+    try:
+        equipment = Equipment.objects.get(serial_no=serial_no)
+    except Equipment.DoesNotExist:
+        return Response({'error': 'Equipment not found'}, status=status.HTTP_404_NOT_FOUND)
+    data = request.data
+    employer_id = data.get('employer')
+    if employer_id:
+        try:
+            employer_instance = Employers.objects.get(id=employer_id)
+            equipment.employer = employer_instance
+        except Employers.DoesNotExist:
+            return Response({'error': 'Employer not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    equipment.assigned_form = data.get('assigned_form', equipment.assigned_form)
+    equipment.save()
+
+    serializer = EquipmentSerializer(equipment)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+

@@ -3,8 +3,8 @@ from django.utils import timezone
 
 
 class Equipment(models.Model):
-    employer = models.ForeignKey('employers.Employers', on_delete=models.SET_NULL, related_name='equipments', null=True)
-    role = models.CharField(max_length=100)
+    employer = models.ForeignKey('employers.Employers', on_delete=models.SET_NULL, related_name='equipments', null=True, blank=True)
+    role = models.CharField(max_length=100, null=True, blank=True)
     purchase_date = models.DateField(default=timezone.now)
     date_of_receipt = models.DateField(default=timezone.now)
     warranty_expiration_date = models.DateField(null=True, blank=True)
@@ -19,3 +19,4 @@ class Equipment(models.Model):
 
     def __str__(self):
         return f"{self.equipment_type} - {self.model} ({self.serial_no})"
+
